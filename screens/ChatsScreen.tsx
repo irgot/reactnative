@@ -4,6 +4,7 @@ import ChatListItem from '../components/ChatListItem/ChatListItem';
 import { ChatRoom } from '../types';
 import chatRooms from '../data/ChatRooms';
 import { FlatList } from 'react-native-gesture-handler';
+import NewMessageButton from '../components/NewMessageButton/NewMessageButton';
 
 export default function ChatsScreen() {
     return (
@@ -14,6 +15,7 @@ export default function ChatsScreen() {
                 style={{ width: '100%' }}
                 ItemSeparatorComponent={FlatListItemSeparator}
             />
+            <NewMessageButton />
         </View>
     )
 }

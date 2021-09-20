@@ -20,7 +20,7 @@ const ChatListItem = (props: ChatListItemProps) => {
     const navigation = useNavigation();
     const onClick = () => {
         // console.warn(`Clicked on ${user.name}`)
-        navigation.navigate('ChatRoom', { id: chatRoom.id })
+        navigation.navigate('ChatRoom', { id: chatRoom.id, name: user.name })
     }
     return (
         <TouchableWithoutFeedback

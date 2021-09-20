@@ -7,7 +7,7 @@
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Pressable, StyleSheet } from 'react-native';
 import { View } from '../components/Themed';
 
 import Colors from '../constants/Colors';
@@ -17,9 +17,10 @@ import NotFoundScreen from '../screens/NotFoundScreen';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import { Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Octicons, MaterialCommunityIcons, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import MainTabNavigator from './MainTabNavigator';
 import ChatRoomScreen from '../screens/ChatRoomScreen';
+import ContactsScreen from '../screens/ContactsScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -65,10 +66,27 @@ function RootNavigator() {
         )
       }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      <Stack.Screen name="Contacts" component={ContactsScreen} options={{ title: 'Contacts' }} />
       <Stack.Screen
         name="ChatRoom"
         component={ChatRoomScreen}
-        options={{ title: 'Chat Room' }}
+        // options={{
+        //   title: (props) => {
+        //     console.log(props)
+        //     return 'ChatRoom'
+        //   }
+        // }}
+        options={({ route }) => ({
+          title: route.params.name,
+          headerRight: () => {
+            return (<View style={styles.iconsView}>
+              <FontAwesome5 name='video' size={22} color={'white'} style={styles.icon} />
+              <MaterialIcons name='call' size={22} color={'white'} style={styles.icon} />
+              <MaterialCommunityIcons name='dots-vertical' size={22} color={'white'} style={styles.icon} />
+            </View>)
+          }
+
+        })}
       />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
@@ -78,3 +96,20 @@ function RootNavigator() {
 }
 
 
+const styles = StyleSheet.create({
+  icon: {
+    backgroundColor: Colors.light.tint,
+    color: Colors.light.background,
+    // paddingRight: 10
+  },
+  iconsView: {
+    // flex: 1,
+    flexDirection: 'row',
+    width: 100,
+    justifyContent: 'space-between',
+    marginRight: 10,
+    backgroundColor: Colors.light.tint
+
+
+  }
+})

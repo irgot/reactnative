@@ -12,7 +12,7 @@ type PropsType = {
 function ContactListItem(props: PropsType) {
 
     const { user } = props;
-    user.imageUri = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/48px-User_icon_2.svg.png"
+    // user.imageUri = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/48px-User_icon_2.svg.png"
     const onPress = () => {
 
     }

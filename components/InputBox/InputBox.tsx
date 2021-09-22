@@ -1,11 +1,17 @@
+import API from '@aws-amplify/api'
+import Auth from '@aws-amplify/auth'
 import { Entypo, FontAwesome5, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons'
-import React, { useState } from 'react'
+import { graphqlOperation } from 'aws-amplify'
+import React, { useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
+import { createMessage } from '../../src/graphql/mutations'
 import styles from './style'
 
-function InputBox() {
+function InputBox(props) {
+    const { chatRoomID } = props
     const [message, setMessage] = useState('')
+    const [myUserId, setMyUserId] = useState(null)
     const onPress = () => {
         if (!message) {
             onMicrophonePress();
@@ -17,12 +23,35 @@ function InputBox() {
         console.warn('Microphone');
 
     }
-    const onSendPress = () => {
-        console.warn(`Sending: ${message}`)
-        setMessage('')
-    }
-    return (
+    const onSendPress = async () => {
 
+        try {
+            await API.graphql(graphqlOperation(createMessage, {
+                input: {
+                    content: message,
+                    userID: myUserId,
+                    chatRoomID
+                }
+            }))
+            setMessage('')
+        } catch (error) {
+            console.error(error)
+        }
+
+    }
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const userInfo = await Auth.currentAuthenticatedUser()
+            setMyUserId(userInfo.attributes.sub)
+        }
+        fetchUser()
+
+        return () => {
+
+        }
+    }, [])
+    return (
         <View style={styles.container}>
             <View style={styles.mainContainer}>
                 <FontAwesome5 name={'laugh-beam'} size={24} color="grey" />

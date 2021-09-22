@@ -27,7 +27,6 @@ function App() {
       if (userInfo) {
         //get the user from Backend with the user SUB from Auth
         const userData = await API.graphql(graphqlOperation(getUser, { id: userInfo.attributes.sub }))
-        console.log(userData);
         if (userData.data.getUSer) {
           console.log('User is already registered in database');
           return;

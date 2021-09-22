@@ -17,11 +17,9 @@ type RouteParams = {
 }
 
 const ChatRoomScreen = ({ route }: RouteParams) => {
+    // console.log(route.params);
 
-    // const route = useRoute();
 
-    // console.log(route.params)
-    console.log(route.params.id)
     return (
         <ImageBackground
             source={{ uri: "https://theabbie.github.io/blog/assets/official-whatsapp-background-image.jpg" }}
@@ -35,7 +33,7 @@ const ChatRoomScreen = ({ route }: RouteParams) => {
                 }}
                 inverted
             />
-            <InputBox />
+            <InputBox chatRoomID={route.params.id} />
         </ImageBackground >
 
     )

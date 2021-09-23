@@ -1,5 +1,5 @@
 export const getUser =
-    `query GetUser($id: ID!) {
+  `query GetUser($id: ID!) {
     getUser(id: $id) {
       id
       name
@@ -13,7 +13,7 @@ export const getUser =
           createdAt
           updatedAt
           chatRoom{
-              id
+              id              
               chatRoomUsers {
                   items {
                       user {
@@ -24,6 +24,17 @@ export const getUser =
                       }
                   }
               }
+              lastMessage {
+                id
+                content
+                createdAt                
+                updatedAt
+                user{
+                  id
+                  name
+                }
+              }
+
           }
         }
         nextToken

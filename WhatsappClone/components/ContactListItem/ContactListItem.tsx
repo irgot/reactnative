@@ -20,7 +20,11 @@ function ContactListItem(props: PropsType) {
     const onPress = async () => {
         try {
             //create a new chat room
-            const newChatRoomData = await API.graphql(graphqlOperation(createChatRoom, { input: {} }))
+            const newChatRoomData = await API.graphql(graphqlOperation(createChatRoom, {
+                input: {
+                    lastMessageID: "ffffffff-ffff-ffff-ffff-ffffffffffff"
+                }
+            }))
 
 
             if (!newChatRoomData) {
@@ -46,7 +50,7 @@ function ContactListItem(props: PropsType) {
                     chatRoomID: newChatRoom.id
                 }
             }))
-            navigation.navigate('ChatRoom', { id: newChatRoom.id, name: "HardCoded name" })
+            navigation.navigate('ChatRoom', { id: newChatRoom.id, name: user.name })
 
         } catch (error) {
             console.error(error);

@@ -15,8 +15,9 @@ export type ChatListItemProps = {
 }
 
 const ChatListItem = (props: ChatListItemProps) => {
+
     const { chatRoom } = props
-    const user = chatRoom.chatRoomUsers.items[0].user;
+    const user = chatRoom?.chatRoomUsers?.items[0].user;
     const [otherUser, setOtherUser] = useState(null)
     const navigation = useNavigation();
     const onClick = () => {
@@ -24,7 +25,7 @@ const ChatListItem = (props: ChatListItemProps) => {
         navigation.navigate('ChatRoom', { id: chatRoom.id, name: user.name })
     }
 
-
+    console.log(chatRoom)
     useEffect(() => {
 
         const getOtherUser = async () => {
@@ -56,13 +57,22 @@ const ChatListItem = (props: ChatListItemProps) => {
                             {otherUser?.name}
                         </Text>
                         <Text style={styles.lastMessage} numberOfLines={2}>
-                            {chatRoom.lastMessage?.content}
+
+                            {chatRoom.lastMessage?.user?.name ?
+                                `${chatRoom.lastMessage?.user?.name}: ${chatRoom.lastMessage?.content}` :
+                                ``}
                         </Text>
                     </View>
 
                 </View>
 
-                <Text style={styles.time}>{moment(chatRoom.lastMessage?.createdAt).format("DD/MM/YYYY")}</Text>
+                <Text style={styles.time}>
+                    {
+                        chatRoom.lastMessage?.createdAt ?
+                            moment(chatRoom.lastMessage?.createdAt).fromNow() :
+                            ``
+                    }
+                </Text>
                 {/* <Text style={styles.time}>Yesterday</Text> */}
 
             </View>

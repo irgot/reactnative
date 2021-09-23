@@ -3,9 +3,9 @@ import Auth from '@aws-amplify/auth'
 import { Entypo, FontAwesome5, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons'
 import { graphqlOperation } from 'aws-amplify'
 import React, { useEffect, useState } from 'react'
-import { Text, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, Text, View } from 'react-native'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
-import { createMessage } from '../../src/graphql/mutations'
+import { createMessage, updateChatRoom } from '../../src/graphql/mutations';
 import styles from './style'
 
 function InputBox(props) {
@@ -23,16 +23,35 @@ function InputBox(props) {
         console.warn('Microphone');
 
     }
+
+    const updateChatRoomLastMessage = async (lastMessageID: string) => {
+        try {
+            await API.graphql(graphqlOperation(updateChatRoom, {
+                input: {
+                    id: chatRoomID,
+                    lastMessageID
+                }
+            }))
+        } catch (error) {
+            console.error(error);
+
+        }
+    }
     const onSendPress = async () => {
 
         try {
-            await API.graphql(graphqlOperation(createMessage, {
+            const newMessageData = await API.graphql(graphqlOperation(createMessage, {
                 input: {
                     content: message,
                     userID: myUserId,
                     chatRoomID
                 }
             }))
+            const newMessageID = newMessageData.data.createMessage.id
+            // console.log(newMessageData.data.createMessage.id);
+            await updateChatRoomLastMessage(newMessageID)
+
+
             setMessage('')
         } catch (error) {
             console.error(error)
@@ -52,7 +71,13 @@ function InputBox(props) {
         }
     }, [])
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : 'height'}
+            style={styles.container}
+        >
+
+
+
             <View style={styles.mainContainer}>
                 <FontAwesome5 name={'laugh-beam'} size={24} color="grey" />
                 <TextInput style={styles.textInput}
@@ -73,7 +98,8 @@ function InputBox(props) {
                     }
                 </View>
             </TouchableOpacity>
-        </View>
+
+        </KeyboardAvoidingView>
 
 
     )

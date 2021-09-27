@@ -115,6 +115,8 @@ npm-debug.*
 *.orig.*
 web-build/
 
+UberClone/.env
+
 # macOS
 .DS_Store
 >>>>>>> master

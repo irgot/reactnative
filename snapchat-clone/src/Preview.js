@@ -15,7 +15,8 @@ import SendIcon from "@material-ui/icons/Send";
 import { useDispatch } from 'react-redux'
 import { v4 as uuid } from "uuid";
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage'
-import firebaseApp from "./firebase";
+import { getFirestore, collection, doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import firebaseApp from "./_firebase";
 
 
 function Preview() {
@@ -23,6 +24,7 @@ function Preview() {
     const history = useHistory()
     const dispatch = useDispatch()
     const storage = getStorage(firebaseApp)
+    const db = getFirestore(firebaseApp)
     useEffect(() => {
         !cameraImage && history.replace('/')
     }, [cameraImage, history])
@@ -33,12 +35,26 @@ function Preview() {
         const id = uuid();
         const imageRef = ref(storage, `posts/${id}`)
         uploadString(imageRef, cameraImage, 'data_url').then((snapshot) => {
-            console.log(snapshot)
+            // console.log(snapshot)
+            getDownloadURL(snapshot.ref).then((url) => {
+                const docRef = doc(collection(db, 'posts'))
+                const data = {
+                    imageUrl: url,
+                    username: 'PAPA React',
+                    read: false,
+                    timestamp: serverTimestamp()
+                }
+                setDoc(docRef, data).then(() => {
+                    history.replace('/chats')
+                })
+            })
+
         }).catch((error) => {
             console.error(error)
-        }).finally(() => {
-            imageRef.toString
         })
+        // }).finally(() => {
+        //     imageRef.toString
+        // })
 
     }
     return (

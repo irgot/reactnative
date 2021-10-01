@@ -22,18 +22,24 @@ const LoginScreen = () => {
         return unsubscribe
     }, [])
     const signIn = () => {
-
+        auth.signInWithEmailAndPassword(email, password).catch(error => {
+            console.error(error)
+        })
     }
 
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' && 'padding'} style={styles.container}>
             <StatusBar style="light" />
+
             <Image
                 source={{
                     uri: "https://blog.mozilla.org/internetcitizen/files/2018/08/signal-logo.png"
                 }}
                 style={{ width: 200, height: 200 }}
+                onError={(e) => {
+                    console.error(e.nativeEvent.error);
+                }}
             />
             <View style={styles.inputContainer}>
                 <Input
@@ -46,8 +52,9 @@ const LoginScreen = () => {
                     placeholder="Password"
                     secureTextEntry
                     type="password"
-                    value="password"
-                    onChangeText={passText => setPassword(passText)}
+                    value={password}
+                    onChangeText={passText => { setPassword(passText) }}
+                    onSubmitEditing={signIn}
                 />
             </View>
             <Button containerStyle={styles.button} onPress={signIn} title="Login" />

@@ -12,9 +12,9 @@ const ChatScreen = () => {
     const route = useRoute()
 
     const [inputMessage, setInputMessage] = useState('')
+    const [messages, setMessages] = useState([])
     useLayoutEffect(() => {
-
-        navigation.setOptions({
+        const unsubscribe = navigation.setOptions({
             title: "Chat",
             headerTitleAlign: 'left',
             headerBackTitleVisible: false,
@@ -26,22 +26,11 @@ const ChatScreen = () => {
                     }}
                 >
                     <Avatar rounded source={{
-                        uri: "https://i.pravatar.cc/300"
+                        uri: messages[0]?.data.photoURL
                     }} />
                     <Text style={{ color: '#fff', fontWeight: 'bold', marginLeft: 10 }}> {route.params.chatName}</Text>
                 </View>
             ),
-
-            // headerLeft: () => (
-            //     <TouchableOpacity>
-            //         <AntDesign name={"arrowleft"} size={24} color="#fff" />
-            //     </TouchableOpacity>
-            // ),
-            // headerBackImageSource: () => (
-            //     <TouchableOpacity>
-            //         <AntDesign name={"arrowleft"} size={24} color="#fc0" />
-            //     </TouchableOpacity>
-            // )
             headerRight: () => (
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: 80 }}>
                     <TouchableOpacity style={{ marginLeft: 10 }}>
@@ -53,11 +42,12 @@ const ChatScreen = () => {
                 </View>
             )
         })
+        return (unsubscribe)
 
-    }, [navigation, route])
+    }, [navigation, route, messages])
     const sendMessage = () => {
         Keyboard.dismiss();
-        db.collection('chats').doc(route.params.id).collection('message').add({
+        db.collection('chats').doc(route.params.id).collection('messages').add({
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             message: inputMessage,
             displayName: auth.currentUser.displayName,
@@ -66,22 +56,22 @@ const ChatScreen = () => {
         }).catch(error => {
             console.error(error)
         })
-        setMessage('')
+        setInputMessage('')
     }
-    const [messages, setMessages] = useState([])
+
     useLayoutEffect(() => {
         const unsubscribe = db
             .collection('chats')
             .doc(route.params.id)
             .collection('messages')
             .orderBy('timestamp', 'desc')
-            .onSnapshot((snapshot) => setMessages(snapshot.docs.map(doc => ({
-                id: doc.id,
-                data: doc.data()
-            }))))
-        return () => {
-            unsubscribe
-        };
+            .onSnapshot((snapshot) => setMessages(snapshot.docs.map(doc => {
+                return ({
+                    id: doc.id,
+                    data: doc.data()
+                })
+            })))
+        return unsubscribe;
     }, [route])
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -95,17 +85,42 @@ const ChatScreen = () => {
                 <>
 
                     {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss()}> */}
-                    <ScrollView>
+                    <ScrollView contentContainerStyle={{ paddingTop: 15 }}>
                         {messages.map(({ id, data }) => (
                             data.email === auth.currentUser.email ? (
                                 <View key={id} style={styles.receiver}>
-                                    <Avatar />
+                                    <Avatar
+                                        size={30}
+                                        rounded
+                                        bottom={-15}
+                                        right={-5}
+                                        position="absolute"
+                                        source={{ uri: data.photoURL }}
+                                        containerStyle={{
+                                            position: 'absolute',
+                                            bottom: -15,
+                                            left: -5
+                                        }}
+                                    />
                                     <Text style={styles.receiverText}>{data.message}</Text>
                                 </View>
                             ) : (
                                 <View key={id} style={styles.sender}>
-                                    <Avatar />
+                                    <Avatar
+                                        size={30}
+                                        rounded
+                                        bottom={-15}
+                                        right={5}
+                                        position="absolute"
+                                        source={{ uri: data.photoURL }}
+                                        containerStyle={{
+                                            position: 'absolute',
+                                            bottom: -15,
+                                            left: -5
+                                        }}
+                                    />
                                     <Text style={styles.senderText}>{data.message}</Text>
+                                    <Text style={styles.senderName}>{data.displayName}</Text>
                                 </View>
                             )
                         ))}
@@ -135,6 +150,27 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
+    receiver: {
+        padding: 15,
+        backgroundColor: '#ececec',
+        alignSelf: 'flex-end',
+        borderRadius: 15,
+        marginRight: 15,
+        marginBottom: 20,
+        maxWidth: '80%',
+        position: 'relative'
+
+    },
+    sender: {
+        padding: 15,
+        backgroundColor: '#2b68e6',
+        alignSelf: 'flex-start',
+        borderRadius: 15,
+        marginLeft: 15,
+        marginBottom: 20,
+        maxWidth: '80%',
+        position: 'relative'
+    },
     footer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -152,5 +188,22 @@ const styles = StyleSheet.create({
         padding: 10,
         color: 'grey',
         borderRadius: 30
+    },
+    senderName: {
+        left: 10,
+        paddingRight: 10,
+        fontSize: 10,
+        color: '#fff'
+    },
+    senderText: {
+        color: "#fff",
+        fontWeight: '500',
+        marginLeft: 10,
+        marginBottom: 15
+    },
+    receiverText: {
+        color: "#000",
+        fontWeight: '600',
+        marginLeft: 10
     }
 })

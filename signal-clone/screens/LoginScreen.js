@@ -44,9 +44,10 @@ const LoginScreen = () => {
             <View style={styles.inputContainer}>
                 <Input
                     placeholder="Email"
-                    autoFocus
                     value={email}
-                    onChangeText={emailText => setEmail(emailText)}
+                    onChangeText={emailText => { setEmail(emailText) }}
+                    autoFocus
+                    autoCapitalize={"none"}
                 />
                 <Input
                     placeholder="Password"

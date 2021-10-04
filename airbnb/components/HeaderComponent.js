@@ -1,7 +1,9 @@
 function HeaderComponent() {
     return (
         <header>
-            <div>opa as</div>
+            <div>
+                <Image
+            </div>
             <div></div>
             <div></div>
         </header>

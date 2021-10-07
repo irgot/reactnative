@@ -22,7 +22,7 @@ const authAPI = (req, res) => {
                 const token = jwt.sign({ userData }, process.env.JWTSECRET, {
                     expiresIn: 60000
                 })
-                const response = { token }
+                const response = { "token": 'Bearer ' + token }
 
                 res.status(200).json(response)
                 resolve()

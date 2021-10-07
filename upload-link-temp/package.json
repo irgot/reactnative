@@ -12,12 +12,20 @@
     "@fortawesome/react-fontawesome": "^0.1.15",
     "@heroicons/react": "^1.0.4",
     "axios": "^0.22.0",
+    "bootstrap": "^5.0.0-beta3",
     "dotenv-safe": "^8.2.0",
+    "file-saver": "^2.0.5",
+    "formidable-serverless": "^1.1.1",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "ldap-authentication": "^2.2.9",
+    "mime": "^2.5.2",
+    "moment": "^2.29.1",
     "next": "latest",
+    "path": "^0.12.7",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "slugify": "^1.6.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",

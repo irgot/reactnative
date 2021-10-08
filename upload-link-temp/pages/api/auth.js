@@ -17,6 +17,7 @@ const authAPI = (req, res) => {
                 res.status(401).json({ erro: 'Erro desconhecido.' })
                 resolve()
             }).then((data) => {
+                console.log(data)
                 const { cn, givenName, uid, mail } = data
                 const userData = { cn, givenName, uid, mail }
                 const token = jwt.sign({ userData }, process.env.JWTSECRET, {

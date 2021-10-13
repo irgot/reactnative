@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { signInRequest } from "../services/auth";
+import { recoverUserInformation, signInRequest } from "../services/auth";
 import { setCookie, parseCookies } from "nookies";
 import Router from "next/router";
 
@@ -13,7 +13,9 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const { 'nricoy.token': token } = parseCookies()
         if (token) {
-
+            recoverUserInformation().then(response => {
+                setUserState(response.user)
+            })
         }
     }, [])
     async function signIn({ email, password }) {

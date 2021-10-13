@@ -13,3 +13,17 @@ export async function signInRequest(data) {
     }
 
 }
+
+
+export async function recoverUserInformation() {
+    await delay()
+    return {
+        token: uuid(),
+        user: {
+            name: "Igor Souza",
+            email: 'igor.souza@ricoy.com.br',
+            avatar_url: 'https://github.com/irgot.png'
+        }
+    }
+
+}

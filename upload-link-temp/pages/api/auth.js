@@ -1,9 +1,11 @@
 import { authenticate } from "ldap-authentication";
 import jwt from "jsonwebtoken";
+import { stringify } from "uuid";
 const authAPI = (req, res) => {
     return new Promise((resolve, reject) => {
         if (req.method === 'POST') {
-            const { username, password } = req.body
+            const { email, password } = req.body
+            const username = email.split('@')[0]
             authenticate({
                 ldapOpts: { url: process.env.URLLDAP },
                 adminDn: process.env.ADMINDN,
@@ -14,23 +16,36 @@ const authAPI = (req, res) => {
                 username: username,
 
             }).catch((err) => {
-                res.status(401).json({ erro: 'Erro desconhecido.' })
+                res.status(401).json({ error: 'Erro desconhecido.' })
                 resolve()
             }).then((data) => {
-                console.log(data)
-                const { cn, givenName, uid, mail } = data
-                const userData = { cn, givenName, uid, mail }
-                const token = jwt.sign({ userData }, process.env.JWTSECRET, {
-                    expiresIn: 60000
-                })
-                const response = { "token": 'Bearer ' + token }
+                if (data) {
+                    console.log(data)
+                    const { cn, givenName, uid, mail, displayName, gecos } = data
+                    const user = { cn, givenName, uid, mail, displayName, gecos }
+                    const token = jwt.sign({ user }, process.env.JWTSECRET, {
+                        expiresIn: '1h'
+                    })
+                    const response = {
+                        user,
+                        "token": token
+                    }
+                    res.status(200).json(response)
+                    resolve()
+                }
+                else {
+                    // res.status(200).json({ error: 'Usuário ou senha invalidos.' })
+                    resolve()
+                }
 
-                res.status(200).json(response)
-                resolve()
             }).finally(() => {
                 // console.log('finaly')
                 reject()
             })
+        }
+        else {
+            res.end()
+            resolve()
         }
     })
 }

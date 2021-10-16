@@ -3,7 +3,11 @@ import { useState, Fragment, useContext, useEffect } from "react"
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { AuthContext } from "../contexts/AuthContext";
-import { api } from '../services/api'
+
+import { parseCookies } from "nookies";
+import { getAPIClient } from "../services/axios";
+import Avatar from "react-avatar";
+import { getDisplayName } from "next/dist/shared/lib/utils";
 const navigation = [
     { name: 'Dashboard', href: '#', current: true },
     { name: 'Team', href: '#', current: false },
@@ -15,10 +19,12 @@ function classNames(...classes) {
 }
 function dashboard() {
     const { userState: user } = useContext(AuthContext)
+    // console.log(user)
 
-    useEffect(() => {
-        api.get('/auth')
-    }, [])
+    // useEffect(() => {
+    //     // api.get('/auth')
+    // }, [])
+
     return (
         <Disclosure as="nav" className="bg-gray-800">
             {({ open }) => (
@@ -81,10 +87,17 @@ function dashboard() {
                                     <div>
                                         <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                                             <span className="sr-only">Open user menu</span>
-                                            <img
+                                            {/* <img
                                                 className="h-8 w-8 rounded-full"
                                                 src={user?.avatar_url}
                                                 alt=""
+                                            /> */}
+                                            <Avatar
+                                                name={user?.displayName ? user?.displayName : user?.gecos}
+                                                maxInitials={2}
+                                                // className="h-8 w-8 rounded-full"
+                                                round={true}
+                                                size="40"
                                             />
                                         </Menu.Button>
                                     </div>
@@ -159,3 +172,21 @@ function dashboard() {
 }
 
 export default dashboard
+
+export const getServerSideProps = async (ctx) => {
+    const apiClient = getAPIClient(ctx)
+    const { ['nricoy.token']: token } = parseCookies(ctx)
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/auth',
+                permanent: false
+            }
+        }
+    }
+    await apiClient.get('/auth')
+    return {
+        props: {}
+    }
+}

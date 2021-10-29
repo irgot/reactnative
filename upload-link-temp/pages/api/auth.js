@@ -20,7 +20,6 @@ const authAPI = (req, res) => {
                 resolve()
             }).then((data) => {
                 if (data) {
-                    console.log(data)
                     const { cn, givenName, uid, mail, displayName, gecos } = data
                     const user = { cn, givenName, uid, mail, displayName, gecos }
                     const token = jwt.sign({ user }, process.env.JWTSECRET, {

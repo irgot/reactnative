@@ -24,7 +24,7 @@ const meAPI = (req, res) => {
             }
             catch (error) {
                 res.json({ token: "expired" })
-                console.log(error)
+                // console.log(error)
             }
 
 

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { recoverUserInformation, signInRequest } from "../services/auth";
-import { setCookie, parseCookies } from "nookies";
+import { setCookie, parseCookies, destroyCookie } from "nookies";
 import Router from "next/router";
 import { api } from "../services/api";
 
@@ -50,14 +50,18 @@ export function AuthProvider({ children }) {
             })
             api.defaults.headers['Authorization'] = `Bearer ${token}`
             setUserState(user)
-            Router.push('/dashboard')
+            Router.push('/')
         }
         else return error
 
 
     }
+    async function signOut() {
+        destroyCookie(undefined, 'nricoy.token')
+        Router.push('/auth')
+    }
     return (
-        <AuthContext.Provider value={{ userState, isAutenticated, signIn }}>
+        <AuthContext.Provider value={{ userState, isAutenticated, signIn, signOut }}>
             {children}
         </AuthContext.Provider>
     )
